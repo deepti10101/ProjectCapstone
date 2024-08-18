@@ -1,24 +1,33 @@
 package com.scaler.productservice.controllers;
 
+
+import com.scaler.productservice.controllerAdvice.ProductNotFoundException;
+import com.scaler.productservice.dto.ErrorDto;
+import com.scaler.productservice.dto.ProductRequestDto;
 import com.scaler.productservice.dto.ProductResponseDto;
 import com.scaler.productservice.models.Product;
 import com.scaler.productservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class ProductController {
 
+
     ProductService productService;
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, RestTemplate restTemplate) {
       this.productService = productService;
     }
 
     @GetMapping("/product/{id}")
-    public ProductResponseDto getProductById(@PathVariable("id") Long id) throws ProductNotFoundException {
+    public ProductResponseDto getProductById(@PathVariable("id") Long id)
+            throws ProductNotFoundException
+             {
         Product product = productService.getProductById(id);
         return ProductResponseDto.from(product);
     }
@@ -52,9 +61,19 @@ public class ProductController {
 
     }
 
-
-    public void partialUpdateProduct() {
+    @PatchMapping
+    public ProductResponseDto  partialUpdateProduct(Long id, Product product) {
+        Product productResponse = productService.partialUpdate(id,product);
+        return ProductResponseDto.from(productResponse);
 
     }
 
+    /*@ExceptionHandler(NullPointerException.class)
+    public ErrorDto nullPointerrExceptionHandler(){
+        ErrorDto errorDto = new ErrorDto();
+        errorDto.setMessage("someting went wrong ");
+        errorDto.setStatus("FAILURE");
+
+        return errorDto;
+    }*/
 }
