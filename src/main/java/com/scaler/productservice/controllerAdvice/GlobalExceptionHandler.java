@@ -1,6 +1,8 @@
 package com.scaler.productservice.controllerAdvice;
 
 import com.scaler.productservice.dto.ErrorDto;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,11 +21,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ErrorDto handleProductDtoNotFoundException (ProductNotFoundException exception ){
+    public  ResponseEntity<ErrorDto> handleProductDtoNotFoundException (ProductNotFoundException exception ){
+
         ErrorDto errorDto = new ErrorDto();
         errorDto.setStatus("FAILURE");
         errorDto.setMessage(exception.getMessage());
-        return errorDto;
+        ResponseEntity<ErrorDto> responseEntity= new ResponseEntity<>(errorDto, HttpStatusCode.valueOf(404));
+        return responseEntity;
     }
 
 }

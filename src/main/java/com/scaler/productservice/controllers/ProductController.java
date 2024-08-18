@@ -57,7 +57,10 @@ public class ProductController {
         return ProductResponseDto.from(product);
     }
 
-    public void deleteProduct() {
+    @DeleteMapping("/Product/{id}")
+    public ProductResponseDto deleteProduct(@PathVariable Long id) {
+        Product product =productService.deleteProduct(id);
+        return ProductResponseDto.from(product);
 
     }
 

@@ -11,4 +11,6 @@ public interface ProductService {
     public Product createProduct(String title, String description, Double price,
                                  String imageUrl, String categoryName);
     public Product partialUpdate(Long id, Product product);
+    public Product deleteProduct(Long id);
+
 }
