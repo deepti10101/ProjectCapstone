@@ -8,6 +8,7 @@ import com.scaler.productservice.dto.ProductResponseDto;
 import com.scaler.productservice.models.Product;
 import com.scaler.productservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,8 +20,9 @@ public class ProductController {
 
 
     ProductService productService;
+
     @Autowired
-    public ProductController(ProductService productService, RestTemplate restTemplate) {
+    public ProductController(@Qualifier("ProductDbService") ProductService productService, RestTemplate restTemplate) {
       this.productService = productService;
     }
 
