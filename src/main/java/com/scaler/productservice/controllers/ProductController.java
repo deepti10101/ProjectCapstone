@@ -1,3 +1,4 @@
+
 package com.scaler.productservice.controllers;
 
 
@@ -5,10 +6,13 @@ import com.scaler.productservice.controllerAdvice.ProductNotFoundException;
 import com.scaler.productservice.dto.ErrorDto;
 import com.scaler.productservice.dto.ProductRequestDto;
 import com.scaler.productservice.dto.ProductResponseDto;
+import com.scaler.productservice.dto.ProductResponseEntity;
 import com.scaler.productservice.models.Product;
 import com.scaler.productservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -66,10 +70,22 @@ public class ProductController {
 
     }
 
-    @PatchMapping
-    public ProductResponseDto  partialUpdateProduct(Long id, Product product) {
-        Product productResponse = productService.partialUpdate(id,product);
-        return ProductResponseDto.from(productResponse);
+    @PatchMapping("/product/{id}")
+    public ProductResponseEntity partialUpdateProduct(@PathVariable("id") Long id, @RequestBody ProductRequestDto productRequestDto) {
+        ProductResponseEntity productResponseEntity= new ProductResponseEntity();
+        Product productResponse = null;
+        try {
+            productResponse = productService.partialUpdate(id, ProductRequestDto.toProduct(productRequestDto));
+        } catch (ProductNotFoundException e) {
+            productResponseEntity.setMessage("Error"+ e.getMessage());
+            productResponseEntity.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+
+            throw new RuntimeException(e);
+        }
+        productResponseEntity.setResponseDto(ProductResponseDto.from(productResponse));
+        productResponseEntity.setMessage("Successfully updated Product");
+        productResponseEntity.setStatus(HttpStatus.OK);
+        return productResponseEntity;
 
     }
 
