@@ -7,6 +7,8 @@ import com.scaler.productservice.repositories.CategoryRepository;
 import com.scaler.productservice.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -91,4 +93,5 @@ public class ProductDbService implements ProductService {
         }
         return categoryOption.get();
     }
+
 }

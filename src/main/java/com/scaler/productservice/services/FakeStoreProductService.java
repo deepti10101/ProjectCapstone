@@ -6,6 +6,7 @@ import com.scaler.productservice.dto.FakeStoreProductRequestDto;
 import com.scaler.productservice.dto.FakeStoreProductResponseDto;
 import com.scaler.productservice.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,13 @@ public class FakeStoreProductService implements ProductService{
 
     private RestTemplate restTemplate;
 
+    private RedisTemplate<String,Object> redisTemplate;
+
     @Autowired
     //preffered over field injection
-    public FakeStoreProductService(RestTemplate restTemplate){
+    public FakeStoreProductService(RestTemplate restTemplate,RedisTemplate redisTemplate){
         this.restTemplate= restTemplate;
+        this.redisTemplate=redisTemplate;
 
     }
     @Override
@@ -97,5 +101,7 @@ public class FakeStoreProductService implements ProductService{
 
         return response.toProduct();
     }
+
+
 
 }

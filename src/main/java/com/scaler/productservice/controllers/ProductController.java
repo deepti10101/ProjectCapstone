@@ -2,15 +2,14 @@
 package com.scaler.productservice.controllers;
 
 
+import com.scaler.productservice.common.AuthenticationCommons;
 import com.scaler.productservice.controllerAdvice.ProductNotFoundException;
-import com.scaler.productservice.dto.ErrorDto;
-import com.scaler.productservice.dto.ProductRequestDto;
-import com.scaler.productservice.dto.ProductResponseDto;
-import com.scaler.productservice.dto.ProductResponseEntity;
+import com.scaler.productservice.dto.*;
 import com.scaler.productservice.models.Product;
 import com.scaler.productservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,17 +22,25 @@ import java.util.List;
 public class ProductController {
 
 
-    ProductService productService;
+    private ProductService productService;
+    private AuthenticationCommons authenticationCommons;
 
     @Autowired
-    public ProductController(@Qualifier("ProductDbService") ProductService productService, RestTemplate restTemplate) {
+    public ProductController(@Qualifier("FakeStoreProductService") ProductService productService,
+                             AuthenticationCommons authenticationCommons) {
       this.productService = productService;
+      this.authenticationCommons=authenticationCommons;
     }
 
+
     @GetMapping("/product/{id}")
-    public ProductResponseDto getProductById(@PathVariable("id") Long id)
-            throws ProductNotFoundException
-             {
+    public ProductResponseDto getProductById(@PathVariable("id") Long id,
+                                             @RequestHeader("Authorization") String token)
+            throws ProductNotFoundException{
+        UserDto userDto = authenticationCommons.validateToken(token);
+        if(userDto == null) {
+            throw new RuntimeException("Invalid Token"); // TODO: Create exception for this
+        }
         Product product = productService.getProductById(id);
         return ProductResponseDto.from(product);
     }
